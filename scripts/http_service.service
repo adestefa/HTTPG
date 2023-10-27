@@ -1,0 +1,13 @@
+[Unit]
+Description=HTTP Game
+
+[Service]
+Environment=PORT=3000
+WorkingDirectory=/HTTP_/
+ExecStart=/HTTP_/server
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>HTTP! GAME</title>
+		<link href="httpcodes_favicon.ico" rel="Shortcut Icon" type="image/x-icon"/>
+		<link rel="icon" href="httpcodes_favicon.ico" type="image/x-icon">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5">
+		<meta name="author" content="anthony.destefano@gmail.com" />
+		<style>
+			h4         	{ margin-top:-20px;font-size:12px; font-weight:normal; }
+			input		{ margin-left:15px;}
+			body		{ font-family:helvetica; margin-left: 15px;}
+			pre			{ font-size:12px; color:black;margin-top:3px; margin-bottom:0;}
+			#wrapper	{ position: relative;}
+			#content 	{ margin: 50% auto; width: 440px; margin-top:20px;}
+			#hint		{ margin: 50% auto; width: 440px; margin-top:20px;}
+			#scoreboard	{ float: right;margin-right:30px;margin-top:-60px;}
+			#game-screen{ display:none;padding-left: 35px;}
+			#version	{ font-size:8px;} 
+			#list_c 	{ float:left;width:210px;height:200px;font-size:10px;padding-left:3px;border-left-width:1px;border-right-width:1px;border-top-width: 0px;}
+			#list_w 	{ float:left;width:215px;height:200px;font-size:10px;border-top:0px solid black;padding-left:3px;border-left-width: 0px;}
+			#_score		{ margin-left:30px;}
+			#_turns		{ margin-left:40px;}
+			#timer  	{ margin-left:20px;height:30px;}
+			#time-left	{ color:red;}
+			#code		{ box-shadow:0 1px 1px rgba(0, 0, 0, 0.075);}
+			#response	{ margin-left:12px; width:400px; font-size:13px; }
+			#result		{ font-size:18px;font-weight:bold;height:50px;margin-top:25px;margin-bottom:10px;width:250px;padding:15px;padding-left:5px;}
+			.correct 	{ color:green; border:1px dashed green;}
+			.wrong		{ color:red; border:1px dashed red;}
+			.receipt	{ float:left;}
+			.board	 	{ min-width:520px; padding-left:15px;padding-right:15px;padding-top:25px; width:560px;height:570px;border: 1px solid black;background:rgba(255, 100, 100, 0);border-radius:10;}
+			.board_w	{ border: 1px solid red;}
+			.board_c 	{ border: 1px solid green;}
+			.shadow  	{ -moz-box-shadow: 3px 3px 5px 6px #ccc;-webkit-box-shadow: 3px 3px 5px 6px #ccc;box-shadow:3px 3px 5px 6px #ccc;border-radius: 5;}
+			.longer		{ height:650px; }
+			.btn_enter	{ background-color:orange;color:black;}
+			.btn_next_c { background-color:orange;color:black }
+			.btn_next_w { background-color:white;color:red;}
+			.btn_restart{ background-color:#3498db;color:rgb(255, 255, 255);}
+			.sub 		{ border:1px dashed rgba(2, 2, 2, 0.59);border-radius: 5;-moz-box-shadow:2px 2px 3px 3px #eee;-webkit-box-shadow: 2px 2px 3px 3px #eee;box-shadow:2px 2px 3px 3px #eee;padding-right:10px;}
+			.desc       { text-align:left; width:400px;}
+			.descd      { margin-left:80px;}
+			.codes      { width:400px;}
+			button      { display: inline-block; padding: 10px 20px;background-color: #3498db;color: #ffffff;border-radius: 5px;cursor: pointer;font-size: 16px;text-align: center;text-decoration: none;transition: background-color 0.3s;width:300px;}
+			.image-container {width: 400px;height: 200px; box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3); display: flex;margin-left: 60px;}
+			.hide       {display:none}
+			@keyframes blink {
+            	0% { color: red; }
+            	50% { color: transparent; }
+            	100% { color: red; }
+       		}
+			.blink-text {
+            	animation: blink 1s infinite;
+        	}
+
+			</style>
+	</head>
+	<body>
+	<div id="wrapper" >
+		<div id="content" class="board shadow">
+			<h1 style="width:410px;margin-left:35px;">HTTP!  <a style="font-size:9px;font-weight:100" href="#" onclick="void(0);" title="A Game by CoreLogic 2015"><span id="version"></span></a></h1>
+			<h4 style="margin-left:35px;">A simple game of HTTP response status codes.</h4>
+			<span id="scoreboard">
+				<span id="_turns"><b>Level: </b><span id="turns">0</span></span>
+				<span id="_score"><b>Score: </b><span id="score">0</span></span><br />
+			</span>
+			<div style="margin-top:-10px;width:440px;margin-left:35px;">
+				<a id="link_hint" style="font-size:10px;" href="javascript:void(0);" onclick="jQuery('#content').toggle();jQuery('#hint').toggle();">Help</a><br />
+			</div>
+			<div id="game-screen">
+				<div id="result"></div>
+				<div style="height:70px;margin-top:35px;width:440px;">
+					<form onsubmit="return false;">
+						<!-- Question: <response description shown> -->
+						<span id="header"><b>Header:</b>  <span id="response">............</span></span>
+						<span class="hide" id="header_game_over"><span class="blink-text">Connection Terminated!</span></span>
+						<br />
+						<hr style="margin-left:0px;"/>
+						<!-- Answer: <player answer> -->
+						<div id="player_controls" style="display:none;width:440px;">
+							<b>Code? </b> <input type="text" maxlength="3" size="3" name="code" id="code" />
+							<input type="submit" id="btn_enter" value="Enter" class="btn_enter" onclick="G.btnEnter();return false"/>
+							 <span id="timer"><b>Timeout in</b>: <span id="time-left">10</span></span>
+						</div>
+						<div class="hide" id="game_over" style="width:440px;">
+							<span style="font-size:16px;font-style: italic;">Game Over!</span>
+						    <input type="submit" id="btn_restart" value="Play Again" class="btn_restart" onclick="G.btnRestart();return false"/>	
+							
+						</div>
+						
+					</form>
+				</div>
+				<hr style="margin-left:0px;margin-top:-5px;width:440px"/>
+				<!-- show which status responses player got right/wrong -->
+				<div id="receipt">		
+					<!--<div id="list_c">Correct:</div> -->
+					<!-- <div id="list_w">Wrong:</div> -->
+					<div class="receipt">
+						<b id="correct">Correct:</b><br />
+						<textarea id="list_c"></textarea>
+					</div>
+					<div class="receipt">
+						<b id='wrong'>Incorrect:</b><br />
+						<textarea id="list_w"></textarea>
+					</div>
+				</div>
+			</div>
+			<div id="play-screen" style="text-align:center">
+				<br /><br />
+				<div class="image-container">
+					
+					<img id="codes" src="imgs/codes2.png" width="400px" />
+				</div>
+				
+				<div class="descd">
+					<br /><br />
+					<p class="desc">
+						A simple game designed to help study response status codes and educate developers.
+						<br /><br />
+						What level can you reach?
+					</p>
+				</div>
+				<br />
+				<button id="play">Play</button>
+				<br /><br /><br /><br />
+				
+			</div>
+		</div>
+		<div id="intro" style="display:none">
+			<div>
+				<span>Connecting...</span>
+			</div>
+		</div>
+		<div id="hint" style="display:none"  class="board shadow">
+			<a id="link_hint" style="font-size:10px;" href="javascript:void(0);" onclick="jQuery('#content').toggle();jQuery('#hint').toggle();">Play</a><br />
+			<div style="padding-left:15px;font-size:12px">
+				<h3>About <small>v0.9</small></h3>
+				<p>The object of the game is to test your knowledge of HTTP status codes, and help you grow as a developer in the process of playing.
+				This project came out of the idea of a simple study guide and how I could add game elements to make it more fun to play than having flash cards alone.
+				</p>
+				<h3>Game play</h3>
+				<p>
+				Each question will come in the form of an HTTP response header, simply provide the correct status code before the timeout to score. The game is over if you get five answers wrong. 
+				</p>
+				<img src="imgs/hint.png" height="44"/>
+				<h3>Hypertext Transfer Protocol (HTTP) response status codes.</h3>
+				<p>Simply put, a status-code (XXX) is a three-digit integer designed to represent one of many possible results of an HTTP request. 
+				By definition, as a bare minimum, an HTTP client must recognise five classes of response types. 
+				The first digit of the status code specifies one of five classes of responses.
+				The Internet Assigned Numbers Authority (IANA) maintains the official registry of HTTP status codes.
+				</p>
+				<b>Five classes of response types:</b>
+				<ul>
+				<li><b>1xx:</b> Informational</b> - Request received, continuing process<br />
+				<li><b>2xx:</b> Success</b> - The action was successfully received, understood, and accepted<br />
+				<li><b>3xx:</b> Redirection</b> - Further action must be taken in order to complete the request<br />
+				<li><b>4xx:</b> Client Error</b> - The request contains bad syntax or cannot be fulfilled<br />
+				<li><b>5xx:</b> Server Error</b>- The server failed to fulfill an apparently valid request<br />
+				</ul>
+				<p>
+				<small>
+				Hypertext Transfer Protocol: <a href="https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol" target="_blank">wikipedia.org</a> | <a href="https://en.wikipedia.org/wiki/Internet_Assigned_Numbers_Authority">IANA</a> | <a href="https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#History" target="_blank">History</a> | <a target="_blank" href="http://tools.ietf.org/html/rfc7231">rfc7231</a> | <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank">Study</a>
+				<br />Validated with <a target="_blank" href="https://html5.validator.nu/?doc=http%3A%2F%2Fadestefa.com%2FHTTPCODES%2F%23&amp;submit=Check">Validator.nu</a> | <a target="_blank" href="http://jsLint.org">jsLint</a>
+				<br /><br />
+				Anthony DeStefano 2023
+				</small>
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<audio id="sound_online"  >
+        <source src="sounds/Systems_online.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+	<audio id="sound_working"  >
+        <source src="sounds/system_working.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+	<audio id="sound_incoming"  >
+        <source src="sounds/incoming.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+	<audio id="sound_cheer"  >
+        <source src="sounds/cheer.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+	<audio id="sound_click"  >
+        <source src="sounds/click.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+	<audio id="sound_bad"  >
+        <source src="sounds/bad.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+	<audio id="sound_keyboard"  >
+        <source src="sounds/keyboard.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>	
+	<audio id="sound_wrong"  >
+        <source src="sounds/wrong.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>	
+	<audio id="sound_beeps"  >
+        <source src="sounds/working3.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>	
+	<audio id="sound_failure"  >
+        <source src="sounds/System_Failure.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>	
+	<audio id="sound_ticking"  >
+        <source src="sounds/ticking.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>	
+	<audio id="sound_bell"  >
+        <source src="sounds/bell.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>		
+	<audio id="sound_tick"  >
+        <source src="sounds/tick.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>	
+
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="httpcd.js"></script>
+	</body>
+</html>
