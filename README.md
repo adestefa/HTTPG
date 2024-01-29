@@ -2,9 +2,11 @@ HTTP!
 A simple game with HTTP status response codes
 
 
-<img src="static/imgs/game.png">
 
-<a href="http://172.104.210.69:3000/">Play Now</a>
+
+<a href="http://172.104.210.69:3000/"><img src="static/imgs/game.png"></a>
+
+<a href="http://172.104.210.69:3000/">Play HTTP! Now</a>
 
 BUILD (Local Machine)
 -----------------------
