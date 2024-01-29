@@ -4,7 +4,7 @@ A simple game with HTTP status response codes
 
 
 
-<a href="http://172.104.210.69:3000/"><img src="static/imgs/game.png"></a>
+<a href="http://172.104.210.69:3000/"><img src="static/imgs/game.png" width="400px"></a>
 
 <a href="http://172.104.210.69:3000/">Play HTTP! Now</a>
 
