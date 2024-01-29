@@ -1,7 +1,7 @@
 HTTP!
 A simple game with HTTP status response codes
 
-
+<a href="http://172.104.210.69:3000/">Play HTTP! Now</a>
 
 BUILD (Local Machine)
 -----------------------

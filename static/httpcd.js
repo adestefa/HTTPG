@@ -1,7 +1,9 @@
 /**
     httpcd.js - http codes game driver
 	
-	Anthony.Destefano@gmail.com - (CoreLogic) 2015
+	Anthony.Destefano@gmail.com 
+        2015 initial CLI version
+	2023 added web UI and sound
 	
 	Had the idea to create a simple flash-card tool to help study HTTP states and their associated codes.	
 	What follows is the result, turned into a simple game designed to help drive interest in the HTTP standard and help educate developers.
